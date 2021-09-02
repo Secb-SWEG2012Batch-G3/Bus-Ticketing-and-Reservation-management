@@ -1,420 +1,576 @@
+#include<iomanip>
 #include <iostream>
-#include <cstring>
-#include <iomanip>
-#include <bits/stdc++.h>
+#include <fstream>
+#include <string.h>
 
 using namespace std;
+int main();
+static int p = 0,stand=56;
 
-// Prototyping general functions
-void mainMenu();
-void checkIfUserWantsToQuit(string userInput);
+class motor
 
-// V A R I A B L E S
-// Preset Variables
-bool arraysAreEmpty = false;
-float averageOfEachMonth[12] = {12,13,4,5,56,59,52,54,46,22,46,78}; // Sample average rainfall data
-float previousMonthsRainfall[12] = {24,78,9,35,35,33,34,33,42,36,5,12}; // Sample previous month rainfall data
-string listOfMonthsLowerCase[12] = {"january", "february", "march", "april", "may", "june", "july","august", "september", "october","november","december"}; // used to check user input in LowerCase letters
-string listOfMonths[12] = {"January", "February", "March", "April", "May", "June", "July","August", "September", "October","November","December"};
-string systemColor = "0B"; // Default System Color is Aqua
-string allMonthsGraphSymbol = "|"; // Default graph symbol
-string avgPreMonthsGraphSymbol = "|"; // Default graph symbol
-string developersName[6] = {"Betelhem Melkamu", "Betelhem Mesele", "Dagmawi Esayas", "Dawit Getachew", "Dawit Yenew", "Ebenezer Yonas"};
-string developersID[6] = {"ETS0139/12", "ETS0138/12", "ETS0204/12", "ETS0213/12", "ETS0216/12", "ETS0226/12"};
+{
 
-// Late assigned variables
-string increaseDecreaseOrEqualAnalysis[12];
-float previousToAverageDifference[12];
-string userMonthChoice;
-string TableOrGraph;
+char busn[5]="1", driver[15]="jack", arrival[5]="12", depart[5]="3", board_cty[15]="addisabeba", destin_cty[15]="asosa", seat[14][4][10]={{"bisrat","dagi","leul","gaddaa",}};
+int cash;
 
-// F U N C T I O N S
-// Find index of any month
-int findIndexOfAnyMonth(string monthName){
-    int monthIndexToReturn;
-    //Change user input to lowerCase
-    transform(monthName.begin(), monthName.end(), monthName.begin(), ::tolower);
-    for(int i = 0; i < 12; i++)
-    {
-        if(listOfMonthsLowerCase[i] == monthName)  //edited list of months to lowercase to compare user input month in lowercase for consistensy
+public:
+
+void add_bus();
+
+void booking();
+
+void empty();
+void fee();
+bool login();
+void logincheck();
+void registration();
+void show();
+void searcheng();
+
+void seat_avail();
+
+void position(int i);
+
+
+}
+
+bus[10];
+void fee(int nseat){
+    int money;
+    money=300*nseat;
+}
+bool motor::login()//user login page
+{
+    string user_name,password,un,up;
+    bool check=false;
+    char option;
+    int counter=0;
+    while(check==false){
+        cout<<"enter user name: ";
+        cin>>user_name;
+        cout<<"enter password: ";
+        cin>>password;
+        ifstream read("data_store.txt");//inputs data from outside txt source 
+        while(read.good())
         {
-            monthIndexToReturn = i;
-            break;
-        }
-        else
-        {
-            monthIndexToReturn = -1;
-        }
-    }
-    return monthIndexToReturn;
-}
-
-// A function that accepts the average rainfall of each month
-void acceptAverageRainfall(){
-    cout << " Enter the average for 12 months..." << endl;
-    for(int i = 0; i < 12; i++){
-        cout << "\t" << listOfMonths[i] << ": ";
-        cin >> averageOfEachMonth[i];
-    }
-}
-
-// A function to accept the current rainfall of each month depending on which month it is
-void acceptPreviousRainfall(){
-    string currentMonth;
-    cout << "\n Enter the previous months rainfall below...";
-    monthInput:
-    cout << "\n What is the current month?: ";
-    cin >> currentMonth;
-    checkIfUserWantsToQuit(currentMonth);
-    //Change user input to lowerCase
-    transform(currentMonth.begin(), currentMonth.end(), currentMonth.begin(), ::tolower);
-    // Error Handling
-    bool isSearchInputCorrect = false;
-    for(int i = 0; i < 12; i++){
-        if(listOfMonthsLowerCase[i] == currentMonth){
-            isSearchInputCorrect = true;
-        }
-    }
-    if(isSearchInputCorrect == false){
-        cout << " \n\t\t\t Invalid Input. Try Again!" << endl << endl;
-        system("pause");
-        goto monthInput;
-    }
-    // Search for the current month
-    int indexOfCurrentMonth = findIndexOfAnyMonth(currentMonth);
-    // Accept the rest of the months
-    int endCount = 0;
-    int i = indexOfCurrentMonth;
-    int monthIndex = indexOfCurrentMonth;
-    while(endCount < 12){
-        cout << " " << listOfMonths[monthIndex] << ": ";
-        cin >> previousMonthsRainfall[monthIndex];
-        monthIndex++;
-        endCount++;
-        if(monthIndex == 11){
-            monthIndex = 0;
-        }
-    }
-    cout << " \n\t\t\tDone!" << endl << endl;
-    system("pause");
-    system("cls");
-    mainMenu();
-}
-
-// Analyze the previous months data to the average data
-void analyzePreviousMonthsToAverage(){
-    for(int i = 0; i < 12; i++){
-        // Decide if the previous month increased, decreased or equaled the average
-        if(previousMonthsRainfall[i] < averageOfEachMonth[i]){
-            increaseDecreaseOrEqualAnalysis[i] = "Decreased";
-            previousToAverageDifference[i] = averageOfEachMonth[i] - previousMonthsRainfall[i];
-        }else if(previousMonthsRainfall[i] > averageOfEachMonth[i]){
-            increaseDecreaseOrEqualAnalysis[i] = "Increased";
-            previousToAverageDifference[i] = previousMonthsRainfall[i] - averageOfEachMonth[i];
-        }else{
-            increaseDecreaseOrEqualAnalysis[i] = "Same";
-            previousToAverageDifference[i] = 0;
-        }
-    }
-}
-
-// Show tabular analysis of a single month
-void showTabularAnalysis(string monthName){
-    int monthIndex = findIndexOfAnyMonth(monthName);
-    cout << " ______________________________________________" << endl << endl;
-    string titles[6] = {"Index            ", "Name             ", "Pre Month RF (mm)", "Average RF (mm)  ", "Difference       ", "Analysis         "};
-    // Show Title and Data
-    for(int title = 0; title < 6; title++)
-    {
-        switch (title)
-        {
-        case 0:
-            cout << "\t" << titles[title] << " :\t" << monthIndex;
-            break;
-        case 1:
-            cout << "\t" << titles[title] << " :\t" << listOfMonths[monthIndex];
-            break;
-        case 2:
-            cout << "\t" << titles[title] << " :\t" << previousMonthsRainfall[monthIndex];
-            break;
-        case 3:
-            cout << "\t" << titles[title] << " :\t" << averageOfEachMonth[monthIndex];
-            break;
-        case 4:
-            cout << "\t" << titles[title] << " :\t" << previousToAverageDifference[monthIndex];
-            break;
-        case 5:
-            cout << "\t" << titles[title] << " :\t" << increaseDecreaseOrEqualAnalysis[monthIndex];
-            break;
-        }
-        cout << endl;
-    }
-    cout << " ______________________________________________" << endl;
-    cout << endl;
-}
-
-// Show graphical analysis of a single month
-void showGraphicalAnalysis(string monthName){
-    int monthIndex = findIndexOfAnyMonth(monthName);
-    int lengthOfStandardBar = 25;
-    int averageRFOfMonthBarLength = lengthOfStandardBar;
-    int previousMonthsRFBarLength = ( previousMonthsRainfall[monthIndex] * lengthOfStandardBar ) / averageOfEachMonth[monthIndex];
-    cout << " The average-previous month raifall graph of Addis Ababa: " << endl << endl;
-    cout << " Avg/Pre" << endl;
-    for(int i = 0; i < 7; i++){
-        if(i == 2){
-            cout << "  |";
-            for(int j = 0; j < averageRFOfMonthBarLength; j++)
+            read >>un >>up;
+            //getline(read,un,);
+            //getline(read,up);
+        cout<<un<<" "<<up<<endl;
+            if(user_name==un && password==up)//check the input user name and password with the data gathered form the txt file
             {
-                cout << avgPreMonthsGraphSymbol;
+                counter=1;
+                goto out;
+                break;
+                //main();
             }
-            cout << "   -> average " << endl;
         }
-        else if(i == 4){
-            cout << "  |";
-            for(int j = 0; j < previousMonthsRFBarLength; j++)
-            {
-                cout << avgPreMonthsGraphSymbol;
-            }
-            cout << "   -> previous month " << endl;
+        out://get the password checking out of the loop
+        if(counter==1){
+            system("cls");
+            cout<<setw(40)<<"welcome to safe bus reservation system"<<endl;
+            check=true;
+            system("PAUSE");
         }
         else{
-            cout << "  |" << endl;
-        }
+            cout<<"wrong user name or password, please check and try again"<<endl;
+            cout<<"to return to registration section press 1: ";
+            cin>>option;
+            if(option==1){
+                bus[0].registration();
+                cout<<"check\n";
+            }
 
+        }
     }
-    cout << "  ";
-    for(int i = 0; i < lengthOfStandardBar * 2 + 8; i++){
-        cout << "-";
+
+
+}
+void motor::registration()//user registration
+{
+    string username,password,password2,un,up;
+    jump:
+    cout<<"choose a user name: ";
+    cin>>username;
+
+    ifstream read("data_store.txt");//check if the user name input already exist or not
+        while(read.good()){
+        getline(read,un,',');
+
+        if(username==un ){
+            cout<<"user name already taken please try again"<<endl;
+            goto jump;
+        }
+        }
+    repass://if the first and second password entry is not the same it comes back here to put password again 
+    cout<<"input a password: ";
+    cin>>password;
+    cout<<"re-enter your password: ";
+    cin>>password2;
+    if(password!=password2){
+        cout<<"please input the same password twice\n";
+        goto repass;
     }
-    cout << " Rainfall (mm)";
-    cout << endl << endl;
+
+    ofstream file;//saves the registration in an txt file outside the program
+    file.open("data_store.txt",ios::app);
+        file <<username<<" "<<password<<endl;
+    file.close();
+    bus[0].login();
+
+
+}
+void vline(char ch)
+
+{
+
+for (int i=80;i>0;i--)
+
+cout<<ch;
+
 }
 
-// Show graphical analysis of all the months
-void showAllAverageGraphicalAnalysis(){
-    int maxBarLength = 0;
-    int lengthOfStandardBar = 80;
-    for(int i = 0; i < 12; i++)
+void motor::add_bus()//is used to install new buses on different routes
+
+{
+    int chz,row,col;
+    bool check=false;
+    while(check==false){
+
+    cout<<"Enter Bus number: ";
+
+    cin>>bus[p].busn;
+
+    cout<<"\nEnter Driver's name: ";
+
+    cin>>bus[p].driver;
+
+    cout<<"\nArrival time: ";
+
+    cin>>bus[p].arrival;
+
+    cout<<"\nDeparture time: ";
+
+    cin>>bus[p].depart;
+
+    cout<<"\nFrom: \t\t\t";
+
+    cin>>bus[p].board_cty;
+
+    cout<<"\nTo: \t\t\t";
+
+    cin>>bus[p].destin_cty;
+
+    bus[p].empty();
+
+    p++;
+    cout<<"\n to continue adding press any number, to exit press 1: ";
+    cin>>chz;
+    if(chz==1){
+    check=true;
+        break;
+    }
+
+    }
+
+}
+
+void motor::booking()
+
+{
+
+int seat_num,roll=0;
+
+char number[5],b_cty[15],des[15];
+char count[10][0];
+
+top:
+cout<<"please enter boarding city: ";
+cin.getline(b_cty,15);
+cout<<"please enter destination: ";
+cin.getline(des,15);
+
+for(char i=0;i<p;i++)//check if there is a bus on the given destination and boarding city
+{
+
+    if(b_cty==bus[i].board_cty && b_cty==bus[i].destin_cty )
     {
-        if(averageOfEachMonth[i] > maxBarLength)
+        bus[i].seat_avail();
+        cout<<endl;
+        count[roll][0]=i;
+        roll++;
+    }
+}
+bool check;
+int n;
+while(check==false){
+    cout<<"Bus no: ";
+    cin>>number;
+
+    for(n=0;n<=p;n++)
+
+    {
+
+        if(strcmp(bus[n].busn, number)==0)//check is the number input is aligned with the number of buses available
         {
-            maxBarLength = averageOfEachMonth[i];
+            break;
         }
     }
-    // Draw the graph
-    cout << " The average rainfall of Addis Ababa throughout the year:" << endl << endl;
-    cout << "  Months" << endl;
-    // Extra graph vertical lines
-    for(int i = 0; i < 2; i++)
+    for(int i=0;i<roll;i++)//checks if the bus number entered is the same as the destination the user chose
     {
-        cout << "    |" << endl;
+        if(number==count[i]){
+            check=true;
+        }
+        else
+            cout<<"please enter the correct bus number\n";
     }
-    // Graph Bars
-    for(int j = 0; j < 12; j++)
+}
+
+
+while(n<=p)
+
+{
+
+    cout<<"\nSeat Number: ";
+
+    cin>>seat_num;
+
+    if(seat_num>stand && seat_num<1)
+
     {
-        cout << "    |";
-        int currentBarLength = ( averageOfEachMonth[j] * lengthOfStandardBar ) / maxBarLength;
-        for(int k = 0; k < currentBarLength; k++)
+
+    cout<<"\nThere are only "<<stand<<" seats available in this bus.";
+
+    }
+
+    else
+
+    {
+
+    if (strcmp(bus[n].seat[seat_num/4][(seat_num%4)-1], "Empty")==0)
+
+    {
+
+        cout<<"Enter passanger's name: ";
+
+        cin>>bus[n].seat[seat_num/4][(seat_num%4)-1];
+
+        break;
+
+    }
+
+    else
+
+    cout<<"The seat number. is already reserved.\n";
+
+    }
+
+    }
+
+    if(n>p)
+
+    {
+
+    cout<<"Enter correct bus no.\n";
+
+    goto top;
+
+    }
+
+}
+
+
+void motor::empty()
+
+{
+
+for(int i=0; i<14;i++)
+
+{
+
+    for(int j=0;j<4;j++)
+
+    {
+
+    strcpy(bus[p].seat[i][j], "Empty");
+
+    }
+
+}
+
+}
+
+void motor::show()
+
+{
+
+    int n;
+    bool check=false;
+    char number[5];
+    while(check=false){
+        cout<<"Enter bus no: ";
+
+        cin>>number;
+
+        for(n=0;n<=p;n++)
+
         {
-            cout << allMonthsGraphSymbol;
+
+            if(strcmp(bus[n].busn, number)==0)
+            {
+
+                break;
+            }
+
         }
-        cout << "   -> " << listOfMonths[j] << endl;
+        if(n>9){
+            cout<<"please enter the correct bus number\n";
+            continue;
+        }
+        else
+            check=true;
+
     }
-    // Extra graph vertical lines
-    for(int i = 0; i < 2; i++)
+
+
+    while(n<=p)
+
     {
-        cout << "    |" << endl;
+
+        vline('-');
+
+        cout<<"Bus no: \n \t"<<bus[n].busn
+
+        <<"\nDriver: \t"<<bus[n].driver<<"\t\tArrival time: \t"<<bus[n].arrival<<"\tDeparture time:"<<bus[n].depart <<"\nFrom: \t\t"<<bus[n].board_cty<<"\t\tTo: \t\t"<<
+
+        bus[n].destin_cty<<"\n";
+
+        vline('*');
+
+        bus[0].position(n);
+
+        int a=1;
+
+        for (int i=0; i<8; i++)
+
+        {
+
+            for(int j=0;j<4;j++)
+
+            {
+
+                a++;
+
+                if(strcmp(bus[n].seat[i][j],"Empty")!=0)
+                    cout<<"\nThe seat no "<<(a-1)<<" is reserved for "<<bus[n].seat[i][j]<<".";
+            }
+
+        }
+
+        break;
+
     }
-    // Graph bottom line
-    cout << "    ";
-    for(int i = 0; i < lengthOfStandardBar + 5; i++)
-    {
-        cout << "-";
-    }
-    cout << " amount (mm)" << endl << endl;
+
+    if(n>p)
+
+        cout<<"Enter correct bus no: ";
+
+
+
 }
 
-// Show tabular analysis of all the months
-void showAllTabularAnalysis(){
-    for(int i = 0; i < 12; i++)
+void motor::position(int l)
+
+{
+
+int s=0;p=0;
+
+for (int i =0; i<14;i++)
+
+{
+
+    cout<<"\n";
+
+    for (int j = 0;j<4; j++)
+
     {
-        cout << " ----------------------------------------------" << endl;
-        cout << "   " << i+1 << ". Data for " << listOfMonths[i] << endl;
-        showTabularAnalysis(listOfMonths[i]);
-        cout << endl;
+
+    s++;
+
+    if(strcmp(bus[l].seat[i][j], "Empty")==0)
+
+        {
+
+        cout.width(5);
+
+        cout.fill(' ');
+
+        cout<<s<<".";
+
+        cout.width(10);
+
+        cout.fill(' ');
+
+        cout<<bus[l].seat[i][j];
+
+        p++;
+
+        }
+
+        else
+
+        {
+
+        cout.width(5);
+
+        cout.fill(' ');
+
+        cout<<s<<".";
+
+        cout.width(10);
+
+        cout.fill(' ');
+
+        cout<<bus[l].seat[i][j];
+
+        }
+
     }
+    }
+
+cout<<"\n\nThere are "<<p<<" seats empty in Bus No: "<<bus[l].busn;
+
 }
 
-// Check if user wants to quit, goto main menu or clean the screen
-void checkIfUserWantsToQuit(string userInput){
-    //Change user input to lowerCase
-    transform(userInput.begin(), userInput.end(), userInput.begin(), ::tolower);
-    if(userInput == "q" || userInput == "quit" || userInput == "e" || userInput == "exit"){
-        exit(1);
-    }
-    else if(userInput == "cls"){
-        system("cls");
-    }
-};
+void motor::seat_avail()
 
-// Analyze or View data
-void analyzeOrViewData(){
-    string userSearchOrAll;
-    analyzePreviousMonthsToAverage();
-    // Allow user to search for a specific month or display data for all
-    searchOrAllChoice:
-    cout << " Would you like to search for a particular month or view all the months? ( Search[S] / All[A] ): ";
-    cin >> userSearchOrAll;
-    //Change user input to lowerCase
-    transform(userSearchOrAll.begin(), userSearchOrAll.end(), userSearchOrAll.begin(), ::tolower);
-    checkIfUserWantsToQuit(userSearchOrAll);
-    if(userSearchOrAll == "s" || userSearchOrAll == "search" || userSearchOrAll == "a" || userSearchOrAll == "all"){
-        if(userSearchOrAll == "s" || userSearchOrAll == "search"){
-            searchAMonth:
-            cout << " Enter month name: ";
-            cin >> userMonthChoice;
-            checkIfUserWantsToQuit(userMonthChoice);
-            //Change user input to lowerCase
-            transform(userMonthChoice.begin(), userMonthChoice.end(), userMonthChoice.begin(), ::tolower);
-            // Error handling for the searched month
-            bool correctSearchInput = false;
-            for(int i = 0; i < 12; i++){
-                if(listOfMonthsLowerCase[i] == userMonthChoice){
-                    correctSearchInput = true;
+{
+
+
+for(int n=0;n<p;n++)
+
+{
+
+    vline('*');
+
+    cout<<"Bus no: \t"<<bus[n].busn<<"\nDriver: \t"<<bus[n].driver
+
+    <<"\t\tArrival time: \t"<<bus[n].arrival<<"\tDeparture Time: \t"
+
+    <<bus[n].depart<<"\nFrom: \t\t"<<bus[n].board_cty<<"\t\tTo: \t\t\t"
+
+    <<bus[n].destin_cty<<"\n";
+
+    vline('*');
+
+    vline('_');
+
+}
+
+}
+void motor::searcheng()//search engine
+{
+    int num,id[10],id2[10],count=0;
+    char name[10];
+    cout<<"1.for name search \n"<<setw(10)<<"2.  :-";
+    cin>>num;
+    if(num==1){
+        cout<<"1.for general search press\n2.for specific bus search: ";
+        cin>>num;
+        if(num==1)//searches name in every bus installed
+        {
+        num=0;//counts the amount of buses up to p(which is amount of buses installed)
+        while(num<=p){
+            cout<<"please enter the name: ";
+            cin>>name;
+            for(int i=0;i<14;i++){
+                for(int j=0;j<4;j++){
+
+                    if(strcmp(bus[num].seat[i][j],name )==0){
+                        id[count]=i;//stores the indexes of the names that were found in the search
+                        id2[count]=j;
+                        count++;
+                    }
                 }
             }
-            if(correctSearchInput == false){
-                cout << " \n\t\t\t Invalid Input. Try Again!" << endl << endl;
-                goto searchAMonth;
+            if(count>0){
+                cout<<"entry found in bus"<<num<<": "<<endl;
+                for(int i=0;i<count;i++){
+                    int c=id[i];
+                    int d=id2[i];
+                    cout<<bus[num].seat[c][d]<<endl;
+                }
+                system("PAUSE");
             }
-            cout << endl;
-        }
-        // Allow user to choose which way they want to view the data
-        graphOrTableInput:
-        cout << " What format of the data would you like to see? ( Table[T] / Graph[G] ): ";
-        cin >> TableOrGraph;
-        checkIfUserWantsToQuit(TableOrGraph);
-        //Change user input to lowerCase
-        transform(TableOrGraph.begin(), TableOrGraph.end(), TableOrGraph.begin(), ::tolower);
-        cout << endl;
-        if(TableOrGraph == "t" || TableOrGraph == "table" || TableOrGraph == "g" || TableOrGraph == "graph"){
-            if(userSearchOrAll == "a" || userSearchOrAll == "all"){
-                if(TableOrGraph == "t" || TableOrGraph == "table"){
-                    showAllTabularAnalysis();
-                    system("pause");
-                    system("cls");
-                    mainMenu();
-                }
-                else if (TableOrGraph == "g" || TableOrGraph == "graph"){
-                    showAllAverageGraphicalAnalysis();
-                    system("pause");
-                    system("cls");
-                    mainMenu();
-                }
-            }else{
-                if(TableOrGraph == "t" || TableOrGraph == "table"){
-                    showTabularAnalysis(userMonthChoice);
-                    system("pause");
-                    system("cls");
-                    mainMenu();
-                }else if (TableOrGraph == "g" || TableOrGraph == "graph"){
-                    showGraphicalAnalysis(userMonthChoice);
-                    system("pause");
-                    system("cls");
-                    mainMenu();
-                }
+            else
+                cout<<"no entries found\n";
+            num++;
             }
-        }else{
-            cout << " \n\t\t Invalid Input. Try Again! " << endl << endl;
-            goto graphOrTableInput;
+
         }
-    }else{
-        cout << " \n\t\t Invalid Input. Try Again! " << endl << endl;
-        goto searchOrAllChoice;
+
+        num=0;
+        }
+        else if (num==2){
+
+            cout<<"please enter bus number: ";
+            cin>>num;
+            cout<<"please enter the name: ";
+            cin>>name;
+            for(int i=0;i<stand;i++){
+            for(int j=0;j<stand;j++){
+
+                if(strcmp(bus[num].seat[i][j],name )==0){
+                cout<<"entry found: ";
+                cout<<bus[num].seat[i][j];
+                }
+                else
+                cout<<"no entry found";
+
+            }
+
+            }
+        }
+
+    /*else if(num==2){
+        cout<<"please enter bus number: ";
+        cin>>num;
+
+        for(int i=0;i<stand;i++){
+            for(int j=0;j<stand;j++){
+
+                if(strcmp(bus[num].seat[i][j],name )==0){
+                cout<<"entry found: ";
+                cout<<bus[num].seat[i][j];
+                }
+                else
+                cout<<"no entry found";
+
+            }
+
+            }
+
+
+    }
+
+
+    }*/
+}
+void firstmenu()//function for login and signup
+{
+    int option;
+    //cout<<setw(40)<<right<<"1.register\n"<<setw(40)<<right<<"2.login"<<endl<<"-> ";
+    cin>>option;
+    if(option==1){
+        bus[0].registration();//if no account ..create an account
+    }
+    else if(option==2){
+        bus[0].login();//if there is an account sign in
     }
 }
-
-// Settings
-void settings(){
-    string userSettingChoice;
-    string userColorChoice;
-    // Settings Menu
-    cout << " Settings " << endl;
-    cout << " 1. Change Colors" << endl;
-    cout << " 2. Change Bar Graph Symbol" << endl;
-    cout << " 3. Return To Main Menu" << endl << endl;
-    colorSettings:
-    cout << " Setting Choice: ";
-    cin >> userSettingChoice;
-    checkIfUserWantsToQuit(userSettingChoice);
-    //Change user input to lowerCase
-    transform(userSettingChoice.begin(), userSettingChoice.end(), userSettingChoice.begin(), ::tolower);
-    // Change Theme Setting
-    if(userSettingChoice == "1" ||  userSettingChoice == "c" || userSettingChoice == "color" || userSettingChoice == "colors"){
-        cout << endl;
-        cout << " Choose two colors from the follow, the first digit being the background and \n the second being the foreground. Press 'D' when finished." << endl;
-        cout << "  \n  0 = Black       8 = Gray \n  1 = Blue        9 = Light Blue \n  2 = Green       A = Light Green \n  3 = Aqua        B = Light Aqua \n  4 = Red         C = Light Red \n  5 = Purple      D = Light Purple \n  6 = Yellow      E = Light Yellow \n  7 = White       F = Bright White" << endl;
-        cout << endl;
-        cout << " Color Choice: ";
-        cin >> userColorChoice;
-        checkIfUserWantsToQuit(userColorChoice);
-        systemColor = userColorChoice;
-        string color = "color " + systemColor;
-        cout << " \n\t System color changed successfully!" << endl << endl;
-        system(color.c_str());
-        system("pause");
-        system("cls");
-        mainMenu();
-    // Change the symbol of bar graphs
-    } else if(userSettingChoice == "2"){
-        string userGraphChangeChoice;
-        cout << endl;
-        cout << " Which bar graph's icons would u like to change?" << endl;
-        cout << " 1. All year rain fall bar-graph's" << endl;
-        cout << " 2. Average-Previous rain fall bar-graph's" << endl;
-        cout << " 3. Return to main menu" << endl;
-        barSettings:
-        cout << " \n Bargraph choice: ";
-        cin >> userGraphChangeChoice;
-        checkIfUserWantsToQuit(userGraphChangeChoice);
-        if(userGraphChangeChoice == "1"){
-            cout << endl;
-            cout << " What symbol would you like to use for the graph? (Current Symbol: '" << allMonthsGraphSymbol << "') " << endl;
-            cout << " New Symbol: ";
-            cin >> allMonthsGraphSymbol;
-            checkIfUserWantsToQuit(allMonthsGraphSymbol);
-            cout << " \n\t Bar-graph symbol changed successfully!" << endl << endl;
-            system("pause");
-            system("cls");
-            mainMenu();
-        } else if (userGraphChangeChoice == "2"){
-            cout << endl;
-            cout << " What symbol would you like to use for the graph? (Current Symbol: '" << avgPreMonthsGraphSymbol << "') " << endl;
-            cout << " New Symbol: ";
-            cin >> avgPreMonthsGraphSymbol;
-            checkIfUserWantsToQuit(avgPreMonthsGraphSymbol);
-            cout << " \n\t Bar-graph symbol changed successfully!" << endl << endl;
-            system("pause");
-            system("cls");
-            mainMenu();
-        } else if (userGraphChangeChoice == "3"){
-            system("cls");
-            mainMenu();
-        } else {
-            cout << " \n\t\t Invalid Input. Try Again! " << endl << endl;
-            system("pause");
-            goto barSettings;
-        }
-    // Error Handling
-    } else {
-        cout << " \n\t\t Invalid Input. Try Again! " << endl << endl;
-        goto colorSettings;
-    }
-}
-
-// Welcome Screen
-void welcomeScreen(){
+void welcomeScreen()//first page greetings
+{
     cout << endl;
     cout << "\t*" << setfill('*') << setw(50) << "*" << endl;
     cout << "\t*" << setfill(' ') << setw(50) << "*" << endl;
@@ -424,136 +580,107 @@ void welcomeScreen(){
     cout << "\t*" << setfill(' ') << setw(50) << "*" << endl;
     cout << "\t*" << setfill(' ') << setw(45) << "Please Select One of the Following Options" << setfill(' ') << setw(5) << "*" << endl;
     cout << "\t*" << setfill(' ') << setw(50) << "*" << endl;
-    cout << "\t*" << setfill(' ') << setw(32) << "1. Start Data Input" << setfill(' ') << setw(18) << "*" << endl;
-    cout << "\t*" << setfill(' ') << setw(33) << "2. Analyze/View Data" << setfill(' ') << setw(17) << "*" << endl;
-    cout << "\t*" << setfill(' ') << setw(33) << "3. Introduction/Help" << setfill(' ') << setw(17) << "*" << endl;
-    cout << "\t*" << setfill(' ') << setw(26) << "4. Developers" << setfill(' ') << setw(24) << "*" << endl;
-    cout << "\t*" << setfill(' ') << setw(24) << "5. Settings" << setfill(' ') << setw(26) << "*" << endl;
-    cout << "\t*" << setfill(' ') << setw(25) << "6. Quit/Exit" << setfill(' ') << setw(25) << "*" << endl;
+    cout << "\t*" << setfill(' ') << setw(32) << "1.REGISTER" << setfill(' ') << setw(18) << "*" << endl;
+    cout << "\t*" << setfill(' ') << setw(33) << "2.LOGIN" << setfill(' ') << setw(17) << "*" << endl;
+    cout << "\t*" << setfill(' ') << setw(25) << "3. Quit/Exit" << setfill(' ') << setw(25) << "*" << endl;
     cout << "\t*" << setfill(' ') << setw(50) << "*" << endl;
     cout << "\t*" << setfill(' ') << setw(50) << "*" << endl;
     cout << "\t*" << setfill('*') << setw(50) << "*" << endl;
     cout << endl;
 }
 
-// Goodbye Screen
-void goodbyeScreen(){
-    cout << endl << endl;
-    cout << "\t*" << setfill('*') << setw(50) << "*" << endl;
-    cout << "\t*" << setfill(' ') << setw(50) << "*" << endl;
-    cout << "\t*" << setfill(' ') << setw(50) << "*" << endl;
-    cout << "\t*" << setfill(' ') << setw(32) << "G O O D  B Y E !" << setfill(' ') << setw(18) << "*" << endl;
-    cout << "\t*" << setfill(' ') << setw(50) << "*" << endl;
-    cout << "\t*" << setfill(' ') << setw(50) << "*" << endl;
-    cout << "\t*" << setfill(' ') << setw(50) << "*" << endl;
-    cout << "\t*" << setfill('*') << setw(50) << "*" << endl;
-    cout << endl << endl << endl << endl << endl;
-}
+void options(){
+    int chz;
+    string user_name,password;
+    bool check=false;
+    while(check==false)
 
-bool keepMainMenuAlive = true;
-// Main Menu or Intro Screen
-void mainMenu(){
-    correctMenuChoice:
-    // Welcoming screen and the main menu list
-    welcomeScreen();
-    char userChoiceInput;
-    while (keepMainMenuAlive){
-        cout << " Menu choice (1/2/3/4/5/6): ";
-        cin >> userChoiceInput;
-        cout << endl;
-        switch(userChoiceInput){
-            // Start Data Input
-            case '1':
-                acceptAverageRainfall();
-                acceptPreviousRainfall();
-                system("pause");
-                system("cls");
-                welcomeScreen();
-                break;
-            // Analyze Or View Data
-            case '2':
-                if(arraysAreEmpty){
-                    cout << " \t X - Can't view/analyze empty data. Please enter data first. - X" << endl;
-                }else{
-                    while(true){
-                        analyzeOrViewData();
-                        system("pause");
-                        system("cls");
-                        welcomeScreen();
-                    }
+{
+
+    system("cls");
+
+    cout<<"\n\n\n\n\n";
+    cout<<"\t\t\t1.Managerial"<<endl;
+    cout<<"\t\t\t2.user"<<endl;
+    cin>>chz;
+    if(chz==1){
+        cout<<"enter user name: "<<endl;
+        cin>>user_name;
+        cout<<"enter password"<<endl;
+        cin>>password; //no password checking system for now
+            cout<<"\t\t\t1.Install\n\t\t\t"<<"2.Show\n\t\t\t"<<"3.search";
+            cout<<"\n\t\t\tEnter your choice: ";
+            cin>>chz;
+            switch(chz)
+
+                {
+
+                    case 1:  bus[p].add_bus();
+                        system("PAUSE");
+                        system("CLS");
+                        break;
+                    case 2:  bus[0].show();
+                        system("PAUSE");
+                        system("CLS");
+                        break;
+                    case 3:
+                        bus[0].searcheng();
+                        break;
                 }
+    }
+    else if(chz==2){
+
+        //firstmenu();
+        cout<<"\t\t\t1.Reservation\n\t\t\t"
+        <<"2.Buses Available. \n\t\t\t"<<"3.modify\n\t\t\t"<<"4.cancel\n\t\t\t"
+        <<"5.Exit";
+
+        cout<<"\n\t\t\tEnter your choice: ";
+
+        cin>>chz;
+        switch(chz)
+
+        {
+
+
+            case 1:  bus[p].booking();
+
+                system("PAUSE");
+                system("CLS");
                 break;
-            // Introduction or Help to the program
-            case '3':
-                cout << "   \t\t\t   Usage \n\t Using this program you can input the average monthly rainfall of Addis Ababa \n and the previous year's monthly rainfall records then this program will \n analyze it and give you statistical results of the data given." << endl << endl;
-                cout << "   \t\t\t   Tools \n\t After submitting rainfall data you can search a specific month or all the months \n to look at a tabled analysis or at a bar-graphed analysis of the information. \n" << endl;
-                cout << "   \t\t\t Navigation \n You can type in 'q', 'quit', 'e', 'exit' at any input place and quit the program at anytime!  " << endl << endl;
-                system("pause");
-                system("cls");
-                welcomeScreen();
+
+
+            case 2:  bus[0].seat_avail();
+
+                system("PAUSE");
+                system("CLS");
                 break;
-            // Developers
-            case '4':
-                // Write developers name and ID
-                cout << "   \t\t\t Developers " << endl;
-                for(int i = 0; i < 6; i++){
-                    cout << " \t\t" << developersName[i] << " -- " << developersID[i] << endl;;
-                }
-                cout << endl << endl;
-                system("pause");
-                system("cls");
-                welcomeScreen();
+
+            case 3://modify reservation
                 break;
-            // Settings
-            case '5':
-                settings();
-                system("pause");
-                system("cls");
-                welcomeScreen();
+            case 4://delete reservation
                 break;
-            // Exit
-            case '6':
-                system("cls");
-                goodbyeScreen();
-                exit(1);
-                break;
-            // Error Handling
-            default:
-                cout << " Invalid choice. Try Again!" << endl;
-                system("pause");
-                system("cls");
-                //mainMenu();
-                //keepMainMenuAlive = false;
-                break;
+            case 5:  exit(0);
+
         }
-        cout << endl;
+
+        }
+
     }
-    cout << endl << endl;
+
+
 }
 
-// Main
-int main(){
-    // Set system wide color theme
-    string color = "color " + systemColor;
-    system(color.c_str());
-    // Main Menu
-    while(true){
-        keepMainMenuAlive = true;
-        mainMenu();
-        system("pause");
-    }
+int main()
+
+{
+
+//system("cls");
+welcomeScreen();
+firstmenu();
+options();
+
     return 0;
+
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
