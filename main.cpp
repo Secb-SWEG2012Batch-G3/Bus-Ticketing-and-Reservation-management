@@ -6,13 +6,18 @@
 using namespace std;
 int main();
 static int p = 0,stand=56;
-
+void options();
+struct counting{
+    int counter;
+};
 class motor
 
 {
 
 char busn[5]="1", driver[15]="jack", arrival[5]="12", depart[5]="3", board_cty[15]="addisabeba", destin_cty[15]="asosa", seat[14][4][10]={{"bisrat","dagi","leul","gaddaa",}};
 int cash;
+char sex[14][4][10];
+int age[14][4];
 
 public:
 
@@ -21,7 +26,7 @@ void add_bus();
 void booking();
 
 void empty();
-void fee();
+float fee(int);
 bool login();
 void logincheck();
 void registration();
@@ -36,7 +41,7 @@ void position(int i);
 }
 
 bus[10];
-void fee(int nseat){
+float motor::fee(int nseat){
     int money;
     money=300*nseat;
 }
@@ -155,12 +160,12 @@ void motor::add_bus()//is used to install new buses on different routes
     cin>>bus[p].depart;
 
     cout<<"\nFrom: \t\t\t";
-
-    cin>>bus[p].board_cty;
+    cin.ignore();
+    cin.getline(bus[p].board_cty,15);
 
     cout<<"\nTo: \t\t\t";
-
-    cin>>bus[p].destin_cty;
+    cin.ignore();
+    cin.getline(bus[p].destin_cty,15);
 
     bus[p].empty();
 
@@ -180,35 +185,49 @@ void motor::booking()
 
 {
 
-int seat_num,roll=0;
+int number,seat_num,roll=0;
 
-char number[5],b_cty[15],des[15];
-char count[10][0];
+char b_cty[15],des[15];
+counting count[10];
 
 top:
 cout<<"please enter boarding city: ";
+cin.ignore();
 cin.getline(b_cty,15);
+//cin>>b_cty;
 cout<<"please enter destination: ";
+cin.ignore();
 cin.getline(des,15);
+//cin>>des;
 
-for(char i=0;i<p;i++)//check if there is a bus on the given destination and boarding city
+for(int i=0;i<p;i++)//check if there is a bus on the given destination and boarding city
 {
-
-    if(b_cty==bus[i].board_cty && b_cty==bus[i].destin_cty )
+    char xi=0;
+    if((strcmp(b_cty,bus[i].board_cty) + strcmp(des,bus[i].destin_cty) )==0)
     {
         bus[i].seat_avail();
         cout<<endl;
-        count[roll][0]=i;
+        count[roll].counter=i+1;
         roll++;
     }
+    
+    xi++;
 }
-bool check;
-int n;
+if(roll==0){
+        cout<<"there is no bus assigned from your location to the specified destination\n";
+        cout<<"THANK YOU for using our service\n";
+        system("PAUSE");
+        options();
+
+    
+}
+bool check=false;
+int n=0;
 while(check==false){
-    cout<<"Bus no: ";
+    cout<<"please choose a Bus number: ";
     cin>>number;
 
-    for(n=0;n<=p;n++)
+    /*for(n=0;n<=p;n++)
 
     {
 
@@ -216,10 +235,13 @@ while(check==false){
         {
             break;
         }
-    }
+    }*/
+    
     for(int i=0;i<roll;i++)//checks if the bus number entered is the same as the destination the user chose
     {
-        if(number==count[i]){
+        cout<<count[i].counter<<" \t"<<number;
+        
+        if(number==count[i].counter){
             check=true;
         }
         else
@@ -253,9 +275,15 @@ while(n<=p)
     {
 
         cout<<"Enter passanger's name: ";
-
-        cin>>bus[n].seat[seat_num/4][(seat_num%4)-1];
-
+        cin.ignore();
+        cin.getline(bus[n].seat[seat_num/4][(seat_num%4)-1],10);
+        cout<<"enter age: ";
+        cin.ignore();
+        cin>>bus[n].age[seat_num/4][(seat_num%4)-1];
+        cout<<"sex('m' for male or 'f' for female): ";
+        cin.ignore();
+        cin.getline(bus[n].sex[seat_num/4][(seat_num%4)-1],10);
+        system("PAUSE");
         break;
 
     }
@@ -267,7 +295,7 @@ while(n<=p)
     }
 
     }
-
+    
     if(n>p)
 
     {
@@ -277,6 +305,8 @@ while(n<=p)
     goto top;
 
     }
+    
+    
 
 }
 
@@ -454,7 +484,7 @@ for(int n=0;n<p;n++)
 
     vline('*');
 
-    cout<<"Bus no: \t"<<bus[n].busn<<"\nDriver: \t"<<bus[n].driver
+    cout<<"\nBus no: \t"<<bus[n].busn<<"\nDriver: \t"<<bus[n].driver
 
     <<"\t\tArrival time: \t"<<bus[n].arrival<<"\tDeparture Time: \t"
 
@@ -464,7 +494,7 @@ for(int n=0;n<p;n++)
 
     vline('*');
 
-    vline('_');
+    //vline('_');
 
 }
 
@@ -616,14 +646,15 @@ void options(){
                 {
 
                     case 1:  bus[p].add_bus();
-                        system("PAUSE");
+                        
                         system("CLS");
                         break;
                     case 2:  bus[0].show();
-                        system("PAUSE");
+                        
                         system("CLS");
                         break;
                     case 3:
+                        system("CLS");
                         bus[0].searcheng();
                         break;
                 }
@@ -645,7 +676,7 @@ void options(){
 
             case 1:  bus[p].booking();
 
-                system("PAUSE");
+                //system("PAUSE");
                 system("CLS");
                 break;
 
@@ -679,6 +710,7 @@ int main()
 welcomeScreen();
 firstmenu();
 options();
+end:
 
     return 0;
 
