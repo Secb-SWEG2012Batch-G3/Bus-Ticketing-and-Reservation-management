@@ -1,6 +1,7 @@
 #include<iomanip>
 #include <iostream>
 #include <fstream>
+#include<cstring>
 #include <string.h>
 
 using namespace std;
@@ -10,13 +11,14 @@ void options();
 struct counting{
     int counter;
 };
+
 class motor
 
 {
 
-char busn[5]="1", driver[15]="jack", arrival[5]="12", depart[5]="3", board_cty[15]="addisabeba", destin_cty[15]="asosa", seat[14][4][10]={{"bisrat","dagi","leul","gaddaa",}};
+char busn[5], driver[15], arrival[5], depart[5], board_cty[15], destin_cty[15], seat[14][4][10];
 int cash;
-char sex[14][4][10];
+char sex[14][4][1];
 int age[14][4];
 
 public:
@@ -24,13 +26,14 @@ public:
 void add_bus();
 
 void booking();
-
+void displaysearch(int num,counting *counted);
 void empty();
 float fee(int);
 bool login();
 void logincheck();
 void registration();
 void show();
+void showall();
 void searcheng();
 
 void seat_avail();
@@ -38,13 +41,47 @@ void seat_avail();
 void position(int i);
 
 
-}
+}bus[10];
 
-bus[10];
-float motor::fee(int nseat){
+
+float motor::fee(int nseat)//calculate fee
+{
     int money;
     money=300*nseat;
 }
+
+void motor :: showall()//display all the input data of every person with out any parameter
+{
+    int num=0;
+    cout<<setw(16)<<setfill(' ')<<left<<"\nNAME\t"<<setw(2)<<left<<"AGE\t"<<setw(2)<<left<<"SEX\t"<<setw(15)<<left<<"BOARIDING CITY\t"<<setw(15)<<left<<"DESTINATION\t"<<setw(2)<<left<<"ARRIVAL\t"<<setw(2)<<left<<"DEPARTURE\t"<<setw(5)<<left<<"BUS NUMBER\t"<<setw(5)<<left<<"SEAT NUMBER"<<endl;
+         
+    while(num<=p){
+               
+        for(int i=0;i<14;i++){
+            for(int j=0;j<4;j++){
+                if(bus[num].age[i][j]==0)//if age is 0 then there wont be any out put ...and pass to next seat 
+                {
+                    continue;
+                        
+                }
+                
+                cout<<setw(15)<<left<<bus[num].seat[i][j]<<"\t  "<<setw(2)<<left<<bus[num].age[i][j]<<"\t";
+                cout<<setw(2)<<left<<bus[num].sex[i][j]<<"\t"<<setw(15)<<left<<bus[num].board_cty<<"\t";
+                cout<<setw(15)<<left<<bus[num].destin_cty<<"\t   ";
+                cout<<setw(2)<<left<<bus[num].arrival<<"\t\t"<<setw(2)<<left<<bus[num].depart<<"\t"<<setw(5)<<left<<num<<"\t"<<setw(5)<<left<<((i*4)+j)<<endl;
+            }
+        }
+       num++;  //add number of buses up to p->which is max number of buses
+
+    }
+    end:
+    system("PAUSE");
+
+}
+
+
+
+
 bool motor::login()//user login page
 {
     string user_name,password,un,up;
@@ -56,13 +93,13 @@ bool motor::login()//user login page
         cin>>user_name;
         cout<<"enter password: ";
         cin>>password;
+
         ifstream read("data_store.txt");//inputs data from outside txt source 
         while(read.good())
         {
             read >>un >>up;
             //getline(read,un,);
             //getline(read,up);
-        cout<<un<<" "<<up<<endl;
             if(user_name==un && password==up)//check the input user name and password with the data gathered form the txt file
             {
                 counter=1;
@@ -75,7 +112,7 @@ bool motor::login()//user login page
         if(counter==1){
             system("cls");
             cout<<setw(40)<<"welcome to safe bus reservation system"<<endl;
-            check=true;
+            check=true;//flag
             system("PAUSE");
         }
         else{
@@ -139,6 +176,7 @@ cout<<ch;
 void motor::add_bus()//is used to install new buses on different routes
 
 {
+
     int chz,row,col;
     bool check=false;
     while(check==false){
@@ -164,7 +202,7 @@ void motor::add_bus()//is used to install new buses on different routes
     cin.getline(bus[p].board_cty,15);
 
     cout<<"\nTo: \t\t\t";
-    cin.ignore();
+    //cin.ignore();
     cin.getline(bus[p].destin_cty,15);
 
     bus[p].empty();
@@ -196,7 +234,7 @@ cin.ignore();
 cin.getline(b_cty,15);
 //cin>>b_cty;
 cout<<"please enter destination: ";
-cin.ignore();
+//cin.ignore();
 cin.getline(des,15);
 //cin>>des;
 
@@ -278,9 +316,16 @@ while(n<=p)
         cin.ignore();
         cin.getline(bus[n].seat[seat_num/4][(seat_num%4)-1],10);
         cout<<"enter age: ";
-        cin.ignore();
+        //cin.ignore();
         cin>>bus[n].age[seat_num/4][(seat_num%4)-1];
-        cout<<"sex('m' for male or 'f' for female): ";
+
+        if(bus[n].age[seat_num/4][(seat_num%4)-1]<18){
+            cout<<"you are not allowed to travel (under age)";
+            cout<<"THANK YOU FOR USING OUR SERVICE";
+            exit('EXIT_SUCCESS');
+        }
+
+        cout<<"enter sex('m' for male or 'f' for female): ";
         cin.ignore();
         cin.getline(bus[n].sex[seat_num/4][(seat_num%4)-1],10);
         system("PAUSE");
@@ -382,7 +427,7 @@ void motor::show()
 
         int a=1;
 
-        for (int i=0; i<8; i++)
+        for (int i=0; i<14; i++)
 
         {
 
@@ -392,8 +437,8 @@ void motor::show()
 
                 a++;
 
-                if(strcmp(bus[n].seat[i][j],"Empty")!=0)
-                    cout<<"\nThe seat no "<<(a-1)<<" is reserved for "<<bus[n].seat[i][j]<<".";
+                /*if(strcmp(bus[n].seat[i][j],"Empty")!=0)
+                    cout<<"\nThe seat no "<<(a-1)<<" is reserved for "<<bus[n].seat[i][j]<<".";*/
             }
 
         }
@@ -499,49 +544,57 @@ for(int n=0;n<p;n++)
 }
 
 }
+void motor::displaysearch(int num,counting *counted){
+
+    cout<<setw(16)<<setfill(' ')<<left<<"\nNAME\t"<<setw(2)<<left<<"AGE\t"<<setw(2)<<left<<"SEX\t"<<setw(15)<<left<<"BOARIDING CITY\t"<<setw(15)<<left<<"DESTINATION\t"<<setw(2)<<left<<"ARRIVAL\t"<<setw(2)<<left<<"DEPARTURE\t"<<endl;
+    cout<<setw(15)<<left<<bus[num].seat[counted[0].counter][counted[1].counter]<<"\t  "<<setw(2)<<left<<bus[num].age[counted[0].counter][counted[1].counter]<<"\t";
+    cout<<setw(2)<<left<<bus[num].sex[counted[0].counter][counted[1].counter]<<"\t"<<setw(15)<<left<<bus[num].board_cty<<"\t";
+    cout<<setw(15)<<left<<bus[num].destin_cty<<"\t   ";
+    cout<<setw(2)<<left<<bus[num].arrival<<"\t\t"<<setw(2)<<left<<bus[num].depart<<"\t"<<endl;
+}
 void motor::searcheng()//search engine
 {
     int num,id[10],id2[10],count=0;
     char name[10];
-    cout<<"1.for name search \n"<<setw(10)<<"2.  :-";
+    counting counted[2];
+    cout<<"1.for name search \n"<<setw(10)<<"2.list groups of certain age level\n3.list groups of a certain sex";
     cin>>num;
     if(num==1){
         cout<<"1.for general search press\n2.for specific bus search: ";
         cin>>num;
         if(num==1)//searches name in every bus installed
         {
-        num=0;//counts the amount of buses up to p(which is amount of buses installed)
-        while(num<=p){
-            cout<<"please enter the name: ";
-            cin>>name;
-            for(int i=0;i<14;i++){
-                for(int j=0;j<4;j++){
+            num=0;//counts the amount of buses up to p(which is amount of buses installed)
+            while(num<=p){
+                cout<<"please enter the name: ";
+                cin>>name;
+                for(int i=0;i<14;i++){
+                    for(int j=0;j<4;j++){
 
-                    if(strcmp(bus[num].seat[i][j],name )==0){
-                        id[count]=i;//stores the indexes of the names that were found in the search
-                        id2[count]=j;
-                        count++;
+                        if(strcmp(bus[num].seat[i][j],name )==0){
+                            id[count]=i;//stores the indexes of the names that were found in the search
+                            id2[count]=j;
+                            count++;
+                        }
                     }
                 }
-            }
-            if(count>0){
-                cout<<"entry found in bus"<<num<<": "<<endl;
-                for(int i=0;i<count;i++){
-                    int c=id[i];
-                    int d=id2[i];
-                    cout<<bus[num].seat[c][d]<<endl;
+                if(count>0){
+                    cout<<"entry found in bus"<<num<<": "<<endl;
+                    for(int i=0;i<count;i++){
+                        counted[0].counter=id[i];
+                        counted[1].counter=id2[i];
+
+                        displaysearch(num,counted);
+                    }
+                    system("PAUSE");//
                 }
-                system("PAUSE");
-            }
-            else
-                cout<<"no entries found\n";
-            num++;
+                else
+                    cout<<"no entries found\n";
+                num++;
             }
 
         }
-
-        num=0;
-        }
+        
         else if (num==2){
 
             cout<<"please enter bus number: ";
@@ -549,43 +602,102 @@ void motor::searcheng()//search engine
             cout<<"please enter the name: ";
             cin>>name;
             for(int i=0;i<stand;i++){
-            for(int j=0;j<stand;j++){
+                for(int j=0;j<stand;j++){
 
-                if(strcmp(bus[num].seat[i][j],name )==0){
-                cout<<"entry found: ";
-                cout<<bus[num].seat[i][j];
+                    if(strcmp(bus[num].seat[i][j],name )==0){
+                        cout<<"entry found: ";
+                        cout<<bus[num].seat[i][j];
+                    }
+                    else
+                        cout<<"no entry found";
+
                 }
-                else
-                cout<<"no entry found";
-
-            }
 
             }
         }
+    }
 
-    /*else if(num==2){
-        cout<<"please enter bus number: ";
-        cin>>num;
 
-        for(int i=0;i<stand;i++){
-            for(int j=0;j<stand;j++){
-
-                if(strcmp(bus[num].seat[i][j],name )==0){
-                cout<<"entry found: ";
-                cout<<bus[num].seat[i][j];
+    else if(num==2)//search by stating age limits 
+    {
+        count=0;
+        num=0;
+        cout<<"please enter the largest age limit: ";
+        cin>>counted[0].counter;
+        cout<<"please enter the smallest age limit: ";
+        cin>>counted[1].counter;
+        while(num<=p){
+            for(int i=0;i<p;i++){
+                for(int j=0;j<4;j++){
+                    
+                    if(bus[num].age[i][j]<=counted[0].counter && bus[num].age[i][j]>=counted[1].counter )//checks every value to see if they meet the given parameter
+                    {
+                        id[count]=i;//stores the indexes of the names that were found in the search
+                        id2[count]=j;
+                        count++;
+                    }
                 }
-                else
-                cout<<"no entry found";
-
+                
             }
+            if(count>0){
+                //cout<<"entry found in bus"<<num<<": "<<endl;
+                for(int i=0;i<count;i++){
+                    counted[0].counter=id[i];
+                    counted[1].counter=id2[i];
 
+                    displaysearch(num,counted);
+                    system("PAUSE");
+                }
+                
             }
+            else{
+                cout<<"no result found";
+                system("PAUSE");
+            }
+            num++;//counts bus amount
+        }
 
+
+    }
+    else if(num==3)//output all of the data on a given sex 
+    {
+        char x[2];
+        cout<<"which sex do you want to display: ";
+        cin>>x;
+        while(num<=p){
+            for(int i=0;i<p;i++){
+                for(int j=0;j<4;j++){
+                    
+                    if(strcmp(bus[num].sex[i][j],x)==0 ){
+                        id[count]=i;//stores the indexes of the names that were found in the search
+                        id2[count]=j;
+                        count++;
+                    }
+                }
+                
+            }
+            if(count>0){
+                //cout<<"entry found in bus"<<num<<": "<<endl;
+                for(int i=0;i<count;i++){
+                    counted[0].counter=id[i];
+                    counted[1].counter=id2[i];
+
+                    displaysearch(num,counted);
+                    system("PAUSE");
+                }
+                
+            }
+            else{
+                cout<<"no result found";
+                system("PAUSE");
+            }
+            num++;
+        }
 
     }
 
 
-    }*/
+    
 }
 void firstmenu()//function for login and signup
 {
@@ -610,8 +722,8 @@ void welcomeScreen()//first page greetings
     cout << "\t*" << setfill(' ') << setw(50) << "*" << endl;
     cout << "\t*" << setfill(' ') << setw(45) << "Please Select One of the Following Options" << setfill(' ') << setw(5) << "*" << endl;
     cout << "\t*" << setfill(' ') << setw(50) << "*" << endl;
-    cout << "\t*" << setfill(' ') << setw(32) << "1.REGISTER" << setfill(' ') << setw(18) << "*" << endl;
-    cout << "\t*" << setfill(' ') << setw(33) << "2.LOGIN" << setfill(' ') << setw(17) << "*" << endl;
+    cout << "\t*" << setfill(' ') << setw(32) << "1.MANAGER" << setfill(' ') << setw(18) << "*" << endl;
+    cout << "\t*" << setfill(' ') << setw(33) << "2.USER" << setfill(' ') << setw(17) << "*" << endl;
     cout << "\t*" << setfill(' ') << setw(25) << "3. Quit/Exit" << setfill(' ') << setw(25) << "*" << endl;
     cout << "\t*" << setfill(' ') << setw(50) << "*" << endl;
     cout << "\t*" << setfill(' ') << setw(50) << "*" << endl;
@@ -619,26 +731,22 @@ void welcomeScreen()//first page greetings
     cout << endl;
 }
 
-void options(){
+void options()//mean menu for all
+{
+    system("cls");
     int chz;
     string user_name,password;
     bool check=false;
+    welcomeScreen();
     while(check==false)
-
 {
-
-    system("cls");
-
-    cout<<"\n\n\n\n\n";
-    cout<<"\t\t\t1.Managerial"<<endl;
-    cout<<"\t\t\t2.user"<<endl;
     cin>>chz;
     if(chz==1){
         cout<<"enter user name: "<<endl;
         cin>>user_name;
         cout<<"enter password"<<endl;
         cin>>password; //no password checking system for now
-            cout<<"\t\t\t1.Install\n\t\t\t"<<"2.Show\n\t\t\t"<<"3.search";
+            cout<<"\t\t\t1.Install\n\t\t\t"<<"2.Show\n\t\t\t"<<"3.search\n\t\t\t"<<"4.all data inputs";
             cout<<"\n\t\t\tEnter your choice: ";
             cin>>chz;
             switch(chz)
@@ -657,11 +765,15 @@ void options(){
                         system("CLS");
                         bus[0].searcheng();
                         break;
+                    case 4:
+                        system("CLS");
+                        bus[0].showall();
+                        break;
                 }
     }
     else if(chz==2){
 
-        //firstmenu();
+        firstmenu();
         cout<<"\t\t\t1.Reservation\n\t\t\t"
         <<"2.Buses Available. \n\t\t\t"<<"3.modify\n\t\t\t"<<"4.cancel\n\t\t\t"
         <<"5.Exit";
@@ -706,11 +818,13 @@ int main()
 
 {
 
-//system("cls");
-welcomeScreen();
-firstmenu();
-options();
-end:
+
+    //system("cls");
+   //welcomeScreen();
+    //system("PAUSE");
+    //firstmenu();
+    options();
+    end:
 
     return 0;
 
