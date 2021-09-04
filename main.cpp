@@ -3,8 +3,13 @@
 #include <fstream>
 #include<cstring>
 #include <string.h>
-
+#include<windows.h>
 using namespace std;
+void pushX(int num){
+    for(int i=0;i<num;i++)
+        cout<<" ";
+
+}
 int main();
 static int p = 0,stand=56;
 int num;
@@ -17,7 +22,7 @@ class motor
 
 {
 
-char busn[5], driver[15], arrival[5], depart[5], board_cty[15], destin_cty[15], seat[14][4][10];
+char busn[5], driver[15], arrival[5], depart[5], board_cty[15], destin_cty[15], seat[14][4][10],clas[14];
 int cash;
 char sex[14][4][1];
 int age[14][4];
@@ -36,7 +41,7 @@ void registration();
 void show();
 void showall();
 void searcheng();
-void feclass();
+
 void seat_avail();
 void discount();
 void position(int i);
@@ -55,18 +60,29 @@ void motor::discount()
 {
     int pe,num_tra,ke;
     cout<< "Get a preview of our discounts: "<<endl;
-    cout<<"if you are traveling with more than 5 families and friends press 1: ";
-    cout<<"\n if you are a veteran who served the country press 2\nif you are aged 75+ or traveling with 7- aged press 3";
+    cout<<"press\n1.  if you are traveling with more than 5 families and friends press ";
+    cout<<"\n 2.  if you are a veteran who served the country press \n3.  if you are aged 75+ or traveling with 7- aged press 3";
+    cin>>pe;
     switch(pe){
     case 1:
         cout<<"how many travelers are there";
         cin>>num_tra;
+        if(num_tra>=5){//  !!!!! missing if there are seats available for that many ppl!!!!
         cout<<"\nyour group will have a discounted payment of : "<<300*(num_tra-1)+0.5*300;
         cout<<"\nif you wish to continue with the discount booking press 1, else other key : ";
         cin>>ke;
         if(ke==1){
         for(int i=0;i<num_tra;i++)
             bus[p].booking();
+        }
+        }
+        else
+        {
+            cout<<"you group number is not legible to have a discount\n";
+            cout<< "\nif you want to have a reservation without discount press 1 else other key.";
+            cin>>ke;
+            if(ke=1)
+                bus[p].booking();
         }
             break;
     case 2:
@@ -95,7 +111,7 @@ void motor::discount()
 void motor :: showall()//display all the input data of every person with out any parameter
 {
     int num=0;
-    cout<<setw(16)<<setfill(' ')<<left<<"\nNAME\t"<<setw(2)<<left<<"AGE\t"<<setw(2)<<left<<"SEX\t"<<setw(15)<<left<<"BOARIDING CITY\t"<<setw(15)<<left<<"DESTINATION\t"<<setw(2)<<left<<"ARRIVAL\t"<<setw(2)<<left<<"DEPARTURE\t"<<setw(5)<<left<<"BUS NUMBER\t"<<setw(5)<<left<<"SEAT NUMBER"<<endl;
+    cout<<setw(16)<<setfill(' ')<<left<<"\nNAME\t"<<setw(2)<<left<<"AGE\t"<<setw(2)<<left<<"SEX\t"<<setw(15)<<left<<"BOARIDING CITY\t"<<setw(15)<<left<<"DESTINATION\t"<<setw(2)<<left<<"ARRIVAL\t"<<setw(2)<<left<<"DEPARTURE\t"<<setw(5)<<left<<"BUS NUMBER\t"<<setw(5)<<left<<"SEAT NUMBER"<<setw(3)<<left<<"class"<<endl;
 
     while(num<=p){
 
@@ -110,7 +126,7 @@ void motor :: showall()//display all the input data of every person with out any
                 cout<<setw(15)<<left<<bus[num].seat[i][j]<<"\t  "<<setw(2)<<left<<bus[num].age[i][j]<<"\t";
                 cout<<setw(2)<<left<<bus[num].sex[i][j]<<"\t"<<setw(15)<<left<<bus[num].board_cty<<"\t";
                 cout<<setw(15)<<left<<bus[num].destin_cty<<"\t   ";
-                cout<<setw(2)<<left<<bus[num].arrival<<"\t\t"<<setw(2)<<left<<bus[num].depart<<"\t"<<setw(5)<<left<<num<<"\t"<<setw(5)<<left<<((i*4)+j)<<endl;
+                cout<<setw(2)<<left<<bus[num].arrival<<"\t\t"<<setw(2)<<left<<bus[num].depart<<"\t"<<setw(5)<<left<<num<<"\t"<<setw(5)<<left<<setw(3)<<left<<bus[num].clas<<((i*4)+j)<<endl;
             }
         }
        num++;  //add number of buses up to p->which is max number of buses
@@ -219,9 +235,17 @@ void motor::add_bus()//is used to install new buses on different routes
 
 {
 
-    int chz,row,col;
+
+    int chz,row,col,cl;
+
     bool check=false;
+
+
     while(check==false){
+            cout<<"What class is the bus to be registered press firstclass or economyclass: \n";
+
+              //cin.getline(bus[p].clas,14);
+              cin>>bus[p].clas;
 
     cout<<"Enter Bus number: ";
 
@@ -267,10 +291,12 @@ void motor::booking()
 
 int number,seat_num,roll=0;
 
-char b_cty[15],des[15];
+char b_cty[15],des[15],cls[14];
 counting count[10];
 
 top:
+    cout<<"please enter either firstclass or economyclass with no space: ";
+    cin>>cls;
 cout<<"please enter boarding city: ";
 cin.ignore();
 cin.getline(b_cty,15);
@@ -283,7 +309,7 @@ cin.getline(des,15);
 for(int i=0;i<p;i++)//check if there is a bus on the given destination and boarding city
 {
     char xi=0;
-    if((strcmp(b_cty,bus[i].board_cty) + strcmp(des,bus[i].destin_cty) )==0)
+    if((strcmp(b_cty,bus[i].board_cty) + strcmp(des,bus[i].destin_cty)+strcmp(cls,bus[i].clas) )==0)
     {
         bus[i].seat_avail();
         cout<<endl;
@@ -424,9 +450,12 @@ void motor::show()
 {
 
     int n;
+    char cl[13];
     bool check=false;
     char number[5];
     while(check=false){
+            cout<<"please enter firstclass or economyclass with no space: ";
+    cin.getline(cl,13);
         cout<<"Enter bus no: ";
 
         cin>>number;
@@ -435,7 +464,7 @@ void motor::show()
 
         {
 
-            if(strcmp(bus[n].busn, number)==0)
+            if(strcmp(bus[n].busn, number)+strcmp(bus[n].clas,cl)==0)
             {
 
                 break;
@@ -458,7 +487,7 @@ void motor::show()
 
         vline('-');
 
-        cout<<"Bus no: \n \t"<<bus[n].busn
+        cout<<"class :\t"<<bus[n].clas<<"Bus no: \n \t"<<bus[n].busn
 
         <<"\nDriver: \t"<<bus[n].driver<<"\t\tArrival time: \t"<<bus[n].arrival<<"\tDeparture time:"<<bus[n].depart <<"\nFrom: \t\t"<<bus[n].board_cty<<"\t\tTo: \t\t"<<
 
@@ -572,7 +601,7 @@ for(int n=0;n<p;n++)
 
     vline('*');
 
-    cout<<"\nBus no: \t"<<bus[n].busn<<"\nDriver: \t"<<bus[n].driver
+    cout<<"\nclass: "<<bus[n].clas<<"\nBus no: \t"<<bus[n].busn<<"\nDriver: \t"<<bus[n].driver
 
     <<"\t\tArrival time: \t"<<bus[n].arrival<<"\tDeparture Time: \t"
 
@@ -757,9 +786,17 @@ void firstmenu()//function for login and signup
 void welcomeScreen()//first page greetings
 {
     cout << endl;
-    cout << "\t*" << setfill('*') << setw(50) << "*" << endl;
-    cout << "\t*" << setfill(' ') << setw(50) << "*" << endl;
-    cout << "\t*" << setfill(' ') << setw(32) << "W E L C O M E !" << setfill(' ') << setw(18) << "*" << endl;
+    //cout << "\t*" << setfill('*') << setw(50) << "*" << endl;
+    //cout << "\t*" << setfill(' ') << setw(50) << "*" << endl;
+/*for(int i=0;i<2;i++)
+    for(int j=0;j<25;j++){
+
+
+        system("CLS");
+        pushX(j);
+        cout << "*"  << "W E L C O M E !"  << "*" << endl;
+        Sleep(100);
+    }*/
     cout << "\t*" << setfill(' ') << setw(50) << "*" << endl;
     cout << "\t*" << setfill('-') << setw(50) << "*" << endl;
     cout << "\t*" << setfill(' ') << setw(50) << "*" << endl;
@@ -837,7 +874,7 @@ void options()//mean menu for all
             case 2:
                 bus[p].discount();
                 system("CLS");
-break;
+                   break;
 
             case 3:  bus[0].seat_avail();
 
