@@ -7,6 +7,7 @@
 using namespace std;
 int main();
 static int p = 0,stand=56;
+int num;
 void options();
 struct counting{
     int counter;
@@ -35,9 +36,9 @@ void registration();
 void show();
 void showall();
 void searcheng();
-
+void feclass();
 void seat_avail();
-
+void discount();
 void position(int i);
 
 
@@ -50,21 +51,62 @@ float motor::fee(int nseat)//calculate fee
     money=300*nseat;
 }
 
+void motor::discount()
+{
+    int pe,num_tra,ke;
+    cout<< "Get a preview of our discounts: "<<endl;
+    cout<<"if you are traveling with more than 5 families and friends press 1: ";
+    cout<<"\n if you are a veteran who served the country press 2\nif you are aged 75+ or traveling with 7- aged press 3";
+    switch(pe){
+    case 1:
+        cout<<"how many travelers are there";
+        cin>>num_tra;
+        cout<<"\nyour group will have a discounted payment of : "<<300*(num_tra-1)+0.5*300;
+        cout<<"\nif you wish to continue with the discount booking press 1, else other key : ";
+        cin>>ke;
+        if(ke==1){
+        for(int i=0;i<num_tra;i++)
+            bus[p].booking();
+        }
+            break;
+    case 2:
+        cout<<"Thank you for serving the country , you are awarded with 50% discount\nYour payment is "<<150;
+        bus[p].booking();
+        break;
+    case 3:
+        cout<<"You are awarded with age discount,if you are 75+ press 1 and if you are traveling with 7- child press 2:\n";
+        cin>>ke;
+        if (ke=1){
+            cout<<"your discount is 25% with payment of : "<<150;
+            bus[p].booking();
+
+            break;
+        }
+        else if(ke=2){
+            cout<<"your discount is 25% for the child and payment is: "<<450;
+            bus[p].booking();
+            break;
+        }
+    default:
+        break;
+    }
+}
+
 void motor :: showall()//display all the input data of every person with out any parameter
 {
     int num=0;
     cout<<setw(16)<<setfill(' ')<<left<<"\nNAME\t"<<setw(2)<<left<<"AGE\t"<<setw(2)<<left<<"SEX\t"<<setw(15)<<left<<"BOARIDING CITY\t"<<setw(15)<<left<<"DESTINATION\t"<<setw(2)<<left<<"ARRIVAL\t"<<setw(2)<<left<<"DEPARTURE\t"<<setw(5)<<left<<"BUS NUMBER\t"<<setw(5)<<left<<"SEAT NUMBER"<<endl;
-         
+
     while(num<=p){
-               
+
         for(int i=0;i<14;i++){
             for(int j=0;j<4;j++){
-                if(bus[num].age[i][j]==0)//if age is 0 then there wont be any out put ...and pass to next seat 
+                if(bus[num].age[i][j]==0)//if age is 0 then there wont be any out put ...and pass to next seat
                 {
                     continue;
-                        
+
                 }
-                
+
                 cout<<setw(15)<<left<<bus[num].seat[i][j]<<"\t  "<<setw(2)<<left<<bus[num].age[i][j]<<"\t";
                 cout<<setw(2)<<left<<bus[num].sex[i][j]<<"\t"<<setw(15)<<left<<bus[num].board_cty<<"\t";
                 cout<<setw(15)<<left<<bus[num].destin_cty<<"\t   ";
@@ -94,7 +136,7 @@ bool motor::login()//user login page
         cout<<"enter password: ";
         cin>>password;
 
-        ifstream read("data_store.txt");//inputs data from outside txt source 
+        ifstream read("data_store.txt");//inputs data from outside txt source
         while(read.good())
         {
             read >>un >>up;
@@ -145,7 +187,7 @@ void motor::registration()//user registration
             goto jump;
         }
         }
-    repass://if the first and second password entry is not the same it comes back here to put password again 
+    repass://if the first and second password entry is not the same it comes back here to put password again
     cout<<"input a password: ";
     cin>>password;
     cout<<"re-enter your password: ";
@@ -248,7 +290,7 @@ for(int i=0;i<p;i++)//check if there is a bus on the given destination and board
         count[roll].counter=i+1;
         roll++;
     }
-    
+
     xi++;
 }
 if(roll==0){
@@ -257,7 +299,7 @@ if(roll==0){
         system("PAUSE");
         options();
 
-    
+
 }
 bool check=false;
 int n=0;
@@ -274,11 +316,11 @@ while(check==false){
             break;
         }
     }*/
-    
+
     for(int i=0;i<roll;i++)//checks if the bus number entered is the same as the destination the user chose
     {
         cout<<count[i].counter<<" \t"<<number;
-        
+
         if(number==count[i].counter){
             check=true;
         }
@@ -291,7 +333,7 @@ while(check==false){
 while(n<=p)
 
 {
-
+//for(int i=0;i<num;i++){
     cout<<"\nSeat Number: ";
 
     cin>>seat_num;
@@ -339,8 +381,9 @@ while(n<=p)
 
     }
 
-    }
-    
+
+}
+
     if(n>p)
 
     {
@@ -350,8 +393,8 @@ while(n<=p)
     goto top;
 
     }
-    
-    
+
+
 
 }
 
@@ -594,7 +637,7 @@ void motor::searcheng()//search engine
             }
 
         }
-        
+
         else if (num==2){
 
             cout<<"please enter bus number: ";
@@ -618,7 +661,7 @@ void motor::searcheng()//search engine
     }
 
 
-    else if(num==2)//search by stating age limits 
+    else if(num==2)//search by stating age limits
     {
         count=0;
         num=0;
@@ -629,7 +672,7 @@ void motor::searcheng()//search engine
         while(num<=p){
             for(int i=0;i<p;i++){
                 for(int j=0;j<4;j++){
-                    
+
                     if(bus[num].age[i][j]<=counted[0].counter && bus[num].age[i][j]>=counted[1].counter )//checks every value to see if they meet the given parameter
                     {
                         id[count]=i;//stores the indexes of the names that were found in the search
@@ -637,7 +680,7 @@ void motor::searcheng()//search engine
                         count++;
                     }
                 }
-                
+
             }
             if(count>0){
                 //cout<<"entry found in bus"<<num<<": "<<endl;
@@ -648,7 +691,7 @@ void motor::searcheng()//search engine
                     displaysearch(num,counted);
                     system("PAUSE");
                 }
-                
+
             }
             else{
                 cout<<"no result found";
@@ -659,7 +702,7 @@ void motor::searcheng()//search engine
 
 
     }
-    else if(num==3)//output all of the data on a given sex 
+    else if(num==3)//output all of the data on a given sex
     {
         char x[2];
         cout<<"which sex do you want to display: ";
@@ -667,14 +710,14 @@ void motor::searcheng()//search engine
         while(num<=p){
             for(int i=0;i<p;i++){
                 for(int j=0;j<4;j++){
-                    
+
                     if(strcmp(bus[num].sex[i][j],x)==0 ){
                         id[count]=i;//stores the indexes of the names that were found in the search
                         id2[count]=j;
                         count++;
                     }
                 }
-                
+
             }
             if(count>0){
                 //cout<<"entry found in bus"<<num<<": "<<endl;
@@ -685,7 +728,7 @@ void motor::searcheng()//search engine
                     displaysearch(num,counted);
                     system("PAUSE");
                 }
-                
+
             }
             else{
                 cout<<"no result found";
@@ -697,7 +740,7 @@ void motor::searcheng()//search engine
     }
 
 
-    
+
 }
 void firstmenu()//function for login and signup
 {
@@ -754,11 +797,11 @@ void options()//mean menu for all
                 {
 
                     case 1:  bus[p].add_bus();
-                        
+
                         system("CLS");
                         break;
                     case 2:  bus[0].show();
-                        
+
                         system("CLS");
                         break;
                     case 3:
@@ -774,9 +817,9 @@ void options()//mean menu for all
     else if(chz==2){
 
         firstmenu();
-        cout<<"\t\t\t1.Reservation\n\t\t\t"
-        <<"2.Buses Available. \n\t\t\t"<<"3.modify\n\t\t\t"<<"4.cancel\n\t\t\t"
-        <<"5.Exit";
+        cout<<"\t\t\t1.Reservation\n\t\t\t"<<"\t\t\t2.Discount Reservation"
+        <<"3.Buses Available. \n\t\t\t"<<"4.modify\n\t\t\t"<<"5.cancel\n\t\t\t"
+        <<"6.Exit";
 
         cout<<"\n\t\t\tEnter your choice: ";
 
@@ -791,19 +834,22 @@ void options()//mean menu for all
                 //system("PAUSE");
                 system("CLS");
                 break;
+            case 2:
+                bus[p].discount();
+                system("CLS");
+break;
 
-
-            case 2:  bus[0].seat_avail();
+            case 3:  bus[0].seat_avail();
 
                 system("PAUSE");
                 system("CLS");
                 break;
 
-            case 3://modify reservation
+            case 4://modify reservation
                 break;
-            case 4://delete reservation
+            case 5://delete reservation
                 break;
-            case 5:  exit(0);
+            case 6:  exit(0);
 
         }
 
@@ -819,10 +865,10 @@ int main()
 {
 
 
-    //system("cls");
-   //welcomeScreen();
-    //system("PAUSE");
-    //firstmenu();
+    system("cls");
+   welcomeScreen();
+    system("PAUSE");
+    firstmenu();
     options();
     end:
 
