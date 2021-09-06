@@ -181,9 +181,14 @@ void motor:: acendingorder(){
 
                 }
                 else{
+
+                    if(bus[num].age[i][j]==0){
+                        continue;
+                    }
                     if(strcmp(bus[num].seat[i][j],"Empty")==0){
                         continue;
                     }
+                    
                     else{
                         for(int k=0;k<=xi;k++){
                             for(int l=0;l<=yi;l++){
