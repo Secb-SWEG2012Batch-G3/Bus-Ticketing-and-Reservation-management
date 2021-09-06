@@ -3,10 +3,16 @@
 #include <fstream>
 #include<cstring>
 #include <string.h>
-
+#include<windows.h>
 using namespace std;
+void pushX(int num){
+    for(int i=0;i<num;i++)
+        cout<<" ";
+
+}
 int main();
 static int p = 0,stand=56;
+int num;
 void options();
 struct counting{
     int counter;
@@ -16,7 +22,7 @@ class motor
 
 {
 
-char busn[5], driver[15], arrival[5], depart[5], board_cty[15], destin_cty[15], seat[14][4][10];
+char busn[5], driver[15], arrival[5], depart[5], board_cty[15], destin_cty[15], seat[14][4][10],clas[14];
 int cash;
 char sex[14][4][1],id[10];
 int age[14][4];
@@ -44,6 +50,7 @@ void searcheng();
 void modify();
 
 void seat_avail();
+void discount();
 void position(int i);
 
 }bus[10];
@@ -55,6 +62,57 @@ float motor::fee(int nseat)//calculate fee
     money=300*nseat;
 }
 
+void motor::discount()
+{
+    int pe,num_tra,ke;
+    cout<< "Get a preview of our discounts: "<<endl;
+    cout<<"press\n1.  if you are traveling with more than 5 families and friends press ";
+    cout<<"\n 2.  if you are a veteran who served the country press \n3.  if you are aged 75+ or traveling with 7- aged press 3";
+    cin>>pe;
+    switch(pe){
+    case 1:
+        cout<<"how many travelers are there";
+        cin>>num_tra;
+        if(num_tra>=5){//  !!!!! missing if there are seats available for that many ppl!!!!
+        cout<<"\nyour group will have a discounted payment of : "<<300*(num_tra-1)+0.5*300;
+        cout<<"\nif you wish to continue with the discount booking press 1, else other key : ";
+        cin>>ke;
+        if(ke==1){
+        for(int i=0;i<num_tra;i++)
+            bus[p].booking();
+        }
+        }
+        else
+        {
+            cout<<"you group number is not legible to have a discount\n";
+            cout<< "\nif you want to have a reservation without discount press 1 else other key.";
+            cin>>ke;
+            if(ke=1)
+                bus[p].booking();
+        }
+            break;
+    case 2:
+        cout<<"Thank you for serving the country , you are awarded with 50% discount\nYour payment is "<<150;
+        bus[p].booking();
+        break;
+    case 3:
+        cout<<"You are awarded with age discount,if you are 75+ press 1 and if you are traveling with 7- child press 2:\n";
+        cin>>ke;
+        if (ke=1){
+            cout<<"your discount is 25% with payment of : "<<150;
+            bus[p].booking();
+
+            break;
+        }
+        else if(ke=2){
+            cout<<"your discount is 25% for the child and payment is: "<<450;
+            bus[p].booking();
+            break;
+        }
+    default:
+        break;
+    }
+}
 
 void motor :: showall()//display all the input data of every person with out any parameter
 {
@@ -244,7 +302,7 @@ bool motor::login()//user login page
         cout<<"enter password: ";
         cin>>password;
 
-        ifstream read("data_store.txt");//inputs data from outside txt source 
+        ifstream read("data_store.txt");//inputs data from outside txt source
         while(read.good())
         {
             read >>un >>up;
@@ -302,7 +360,7 @@ void motor::registration()//user registration
             goto jump;
         }
         }
-    repass://if the first and second password entry is not the same it comes back here to put password again 
+    repass://if the first and second password entry is not the same it comes back here to put password again
     cout<<"input a password: ";
     cin>>password;
     cout<<"re-enter your password: ";
@@ -334,10 +392,18 @@ void motor::add_bus()//is used to install new buses on different routes
 
 {
 
-    int chz,row,col;
+
+    int chz,row,col,cl;
+
     bool check=false;
-   
+
+
     while(check==false){
+            cout<<"What class is the bus to be registered press firstclass or economyclass: \n";
+
+              //cin.getline(bus[p].clas,14);
+              cin>>bus[p].clas;
+
     cout<<"Enter Bus number: ";
 
     cin>>bus[p].busn;
@@ -549,9 +615,12 @@ void motor::show()
 {
 
     int n;
+    char cl[13];
     bool check=false;
     char number[5];
-    while(check==false){
+    while(check=false){
+            cout<<"please enter firstclass or economyclass with no space: ";
+    cin.getline(cl,13);
         cout<<"Enter bus no: ";
 
         cin>>number;
@@ -560,7 +629,7 @@ void motor::show()
 
         {
 
-            if(strcmp(bus[n].busn, number)==0)
+            if(strcmp(bus[n].busn, number)+strcmp(bus[n].clas,cl)==0)
             {
 
                 break;
@@ -583,7 +652,7 @@ void motor::show()
 
         vline('-');
 
-        cout<<"Bus no: \n \t"<<bus[n].busn
+        cout<<"class :\t"<<bus[n].clas<<"Bus no: \n \t"<<bus[n].busn
 
         <<"\nDriver: \t"<<bus[n].driver<<"\t\tArrival time: \t"<<bus[n].arrival<<"\tDeparture time:"<<bus[n].depart <<"\nFrom: \t\t"<<bus[n].board_cty<<"\t\tTo: \t\t"<<
 
@@ -681,7 +750,7 @@ for(int n=0;n<p;n++)
 
     vline('*');
 
-    cout<<"\nBus no: \t"<<bus[n].busn<<"\nDriver: \t"<<bus[n].driver
+    cout<<"\nclass: "<<bus[n].clas<<"\nBus no: \t"<<bus[n].busn<<"\nDriver: \t"<<bus[n].driver
 
     <<"\t\tArrival time: \t"<<bus[n].arrival<<"\tDeparture Time: \t"
 
@@ -766,7 +835,7 @@ void motor::searcheng()//search engine
             }
 
         }
-        
+
         else if (num==2){
 
             cout<<"please enter bus number: ";
@@ -807,7 +876,7 @@ void motor::searcheng()//search engine
     }
 
 
-    else if(num==2)//search by stating age limits 
+    else if(num==2)//search by stating age limits
     {
         count=0;
         num=0;
@@ -833,7 +902,7 @@ void motor::searcheng()//search engine
                         }
                     }
                 }
-                
+
             }
             if(count>0){
                 //cout<<"entry found in bus"<<num<<": "<<endl;
@@ -857,7 +926,7 @@ void motor::searcheng()//search engine
 
 
     }
-    else if(num==3)//output all of the data on a given sex 
+    else if(num==3)//output all of the data on a given sex
     {
         num=0;
         count=0;
@@ -867,14 +936,14 @@ void motor::searcheng()//search engine
         while(num<=p){
             for(int i=0;i<14;i++){
                 for(int j=0;j<4;j++){
-                    
+
                     if(strcmp(bus[num].sex[i][j],x)==0 ){
                         id[count]=i;//stores the indexes of the sex that were found in the search
                         id2[count]=j;
                         count++;
                     }
                 }
-                
+
             }
             if(count>0){
                 //cout<<"entry found in bus"<<num<<": "<<endl;
@@ -885,7 +954,7 @@ void motor::searcheng()//search engine
                     displaysearch(num,counted);
                     system("PAUSE");
                 }
-                
+
             }
             else{
                 cout<<"no result found";
@@ -900,7 +969,7 @@ void motor::searcheng()//search engine
     }
 
 
-    
+
 }
 void firstmenu()//function for login and signup
 {

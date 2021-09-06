@@ -1,5 +1,33 @@
 bisrat mekonnen
 bereket me
+<<<<<<< HEAD
 bisrat mekonnen 41
 bisrat mekonnen 18467
 dagi dread 41
+=======
+leul 123
+leul 123
+leul 123
+leul 123
+leul 123
+leul 123
+l 1
+l 1
+l 1
+l 1
+l 1
+l 1
+l 1
+l 1
+l 1
+l 1
+l 1
+l 1
+l 1
+l 1
+l 1
+l 1
+l 1
+l 1
+l 1
+>>>>>>> 1ed95c3b9bcdd671d10d7e772b9899b8df66a08d
