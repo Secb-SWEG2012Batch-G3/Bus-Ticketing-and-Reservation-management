@@ -1,262 +1,88 @@
-#include <iostream>
-
-#include <string.h>
-
-using namespace std;
-
-static int p = 0;
-
-class system
-
+void motor::registration()//user registration
 {
+    string username,password,password2,un,up;
+    jump:
+    cout<<"choose a user name: ";
+    cin>>username;
 
-  char busn[5], driver[15], arrival[5], depart[5], board_cty[10], destin_cty[10], seat[8][4][10];
-  int nseat,cash;
+    ifstream read("data_store.txt");//check if the user name input already exist or not
+        while(read.good()){
+        getline(read,un,',');
 
-public:
-
-  void add_bus();
-
-  void booking();
-
-  void empty();
-
-  void show();
-
-  void seat_avail();
-
-  void position(int i);
-  void fee();
-
-}
-
-bus[10];
-void fee(int nseat){
-	int money;
-	money=300*nseat;
-}
-
-void vline(char ch)
-
-{
-
-  for (int i=80;i>0;i--)
-
-  cout<<ch;
-
-}
-
-void system::add_bus()
-
-{
-	int chz;
-	bool check=false;
-	while(check==false){
-
-	  cout<<"Enter Bus number: ";
-
-	  cin>>bus[p].busn;
-
-	  cout<<"\nEnter Driver's name: ";
-
-	  cin>>bus[p].driver;
-
-	  cout<<"\nArrival time: ";
-
-	  cin>>bus[p].arrival;
-
-	  cout<<"\nDeparture time: ";
-
-	  cin>>bus[p].depart;
-
-	  cout<<"\nFrom: \t\t\t";
-
-	  cin>>bus[p].board_cty;
-
-	  cout<<"\nTo: \t\t\t";
-
-	  cin>>bus[p].destin_cty;
-	  cout<<"\nTotal seats: ";
-	  cin>>bus[p].nseat;
-
-	  bus[p].empty();
-
-	  p++;
-	  cout<<"\n to continue adding press any number, to exit press 1: ";
-	  cin>>chz;
-	  if(chz==1){
-	  	break;
-	  }
-
-	}
-
-}
-
-void system::booking()
-
-{
-
-  int seat_num;
-
-  char number[5];
-
-  top:
-
-  cout<<"Bus no: ";
-
-  cin>>number;
-
-  int n;
-
-  for(n=0;n<=p;n++)
-
-  {
-
-    if(strcmp(bus[n].busn, number)==0)
-
-    break;
-
-  }
-
-  while(n<=p)
-
-  {
-
-    cout<<"\nSeat Number: ";
-
-    cin>>seat_num;
-
-    if(seat_num>bus[p].nseat && seat_num<1)
-
-    {
-
-      cout<<"\nThere are only "<<bus[p].nseat<<" seats available in this bus.";
-
+        if(username==un ){
+            cout<<"user name already taken please try again"<<endl;
+            goto jump;
+        }
+        }
+    repass://if the first and second password entry is not the same it comes back here to put password again 
+    cout<<"input a password: ";
+    cin>>password;
+    cout<<"re-enter your password: ";
+    cin>>password2;
+    if(password!=password2){
+        cout<<"please input the same password twice\n";
+        goto repass;
     }
 
-    else
+    ofstream file;//saves the registration in an txt file outside the program
+    file.open("data_store.txt",ios::app);
+        file <<username<<" "<<password<<endl;
+    file.close();
+    bus[0].login();
 
-    {
-
-    if (strcmp(bus[n].seat[seat_num/4][(seat_num%4)-1], "Empty")==0)
-
-      {
-
-        cout<<"Enter passanger's name: ";
-
-        cin>>bus[n].seat[seat_num/4][(seat_num%4)-1];
-
-        break;
-
-      }
-
-    else
-
-      cout<<"The seat number. is already reserved.\n";
-
-      }
-
-      }
-
-    if(n>p)
-
-    {
-
-      cout<<"Enter correct bus no.\n";
-
-      goto top;
-
-    }
-
-  }
-
-
-void system::empty()
-
-{
-
-  for(int i=0; i<8;i++)
-
-  {
-
-    for(int j=0;j<4;j++)
-
-    {
-
-      strcpy(bus[p].seat[i][j], "Empty");
-
-    }
-
-  }
 
 }
 
-void system::show()
 
+
+
+
+
+
+bool motor::login()//user login page
 {
+    string user_name,password,un,up;
+    bool check=false;
+    char option;
+    int counter=0;
+    while(check==false){
+        cout<<"enter user name: ";
+        cin>>user_name;
+        cout<<"enter password: ";
+        cin>>password;
 
-  int n;
+        ifstream read("data_store.txt");//inputs data from outside txt source 
+        while(read.good())
+        {
+            read >>un >>up;
+            //getline(read,un,);
+            //getline(read,up);
+            if(user_name==un && password==up)//check the input user name and password with the data gathered form the txt file
+            {
+                counter=1;
+                goto out;
+                break;
+                //main();
+            }
+        }
+        out://get the password checking out of the loop
+        if(counter==1){
+            system("cls");
+            cout<<setw(40)<<"welcome to safe bus reservation system"<<endl;
+            check=true;//flag
+            system("PAUSE");
+        }
+        else{
+            cout<<"wrong user name or password, please check and try again"<<endl;
+            cout<<"to return to registration section press 1: ";
+            cin>>option;
+            if(option==1){
+                bus[0].registration();
+                cout<<"check\n";
+            }
 
-  char number[5];
-
-  cout<<"Enter bus no: ";
-
-  cin>>number;
-
-  for(n=0;n<=p;n++)
-
-  {
-
-    if(strcmp(bus[n].busn, number)==0)
-
-    break;
-
-  }
-
-while(n<=p)
-
-{
-
-  vline('-');
-
-  cout<<"Bus no: \n \t"<<bus[n].busn
-
-  <<"\nDriver: \t"<<bus[n].driver<<"\t\tArrival time: \t"<<bus[n].arrival<<"\tDeparture time:"<<bus[n].depart <<"\nFrom: \t\t"<<bus[n].board_cty<<"\t\tTo: \t\t"<<
-
-  bus[n].destin_cty<<"\n";
-
-  vline('*');
-
-  bus[0].position(n);
-
-  int a=1;
-
-  for (int i=0; i<8; i++)
-
-  {
-
-    for(int j=0;j<4;j++)
-
-    {
-
-      a++;
-
-      if(strcmp(bus[n].seat[i][j],"Empty")!=0)
-
-      cout<<"\nThe seat no "<<(a-1)<<" is reserved for "<<bus[n].seat[i][j]<<".";
-
+        }
     }
-
-  }
-
-  break;
-
-  }
-
-  if(n>p)
-
-    cout<<"Enter correct bus no: ";
-
 
 
 }
