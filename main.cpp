@@ -26,6 +26,7 @@ public:
 void add_bus();
 void acendingorder();
 void booking();
+void  cancel();
 void decsending();
 void displaysearch(int num,counting *counted);
 void empty();
@@ -770,6 +771,7 @@ void motor::searcheng()//search engine
 
             cout<<"please enter bus number: ";
             cin>>num;
+            num--;
             cout<<"please enter the name: ";
             cin>>name;
             for(int i=0;i<p;i++){
@@ -1075,6 +1077,7 @@ void options()//mean menu for all
                 case 4://delete reservation
                     system("CLS");
                     cout<<"\n\n\n\n\n";
+                    bus[0].cancel();
                     cout<<endl;
                     system("PAUSE");
                     goto maker;
@@ -1115,6 +1118,43 @@ void motor:: edit(int busnumber,int entry,int select){
             break;
     }
 }
+
+
+void motor :: cancel(){
+    int entry,busnumber,select;
+    bool check=false;
+    int i,j;
+    cout<<"enter bus number:-> ";
+    cin>>busnumber;
+    cout<<"enter the seat number to modify:-> ";
+    cin>>entry;//accept seat number
+    busnumber--;
+    counting counted[2];
+    counted[0].counter=entry/4;
+    counted[1].counter=(entry%4)-1;
+    if(bus[busnumber].age[entry/4][(entry%4)-1]==0){
+        cout<<"there is no entry on the selected seat\n";
+        check=true;
+        goto end;
+
+    }
+    else{
+        displaysearch(busnumber,counted);
+        bus[busnumber].age[entry/4][(entry%4)-1]=0;
+        strcpy(bus[busnumber].seat[entry/4][(entry%4)-1],"Empty");
+        strcpy(bus[busnumber].sex[entry/4][(entry%4)-1]," ");
+        //will be made to use id number to allow users to only update their own seat .... database need to be created first
+    }
+    if(check==true){
+        end:
+        cout<<"end";
+        
+    }  
+}
+
+
+
+
 void motor :: modify(){
     int entry,busnumber,select;
     bool check=false;
@@ -1123,7 +1163,7 @@ void motor :: modify(){
     cin>>busnumber;
     cout<<"enter the seat number to modify:-> ";
     cin>>entry;//accept seat number
-
+    busnumber--;
     counting counted[2];
     counted[0].counter=entry/4;
     counted[1].counter=(entry%4)-1;
